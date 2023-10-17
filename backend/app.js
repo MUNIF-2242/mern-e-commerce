@@ -1,15 +1,30 @@
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
 
 require("dotenv/config");
 
 const api = process.env.API_URL;
 
-app.get(api + "/", (req, res) => {
-  res.send("hello api");
+//Middleware
+app.use(express.json());
+app.use(morgan("tiny"));
+
+app.get(`${api}/products`, (req, res) => {
+  const products = {
+    id: 1,
+    name: "comb",
+    image: "image url",
+  };
+  res.send(products);
+});
+
+app.post(`${api}/products`, (req, res) => {
+  const newProducts = req.body;
+
+  res.send(newProducts);
 });
 
 app.listen(3000, () => {
-  console.log(api);
   console.log("appp is listing on port 3000");
 });
