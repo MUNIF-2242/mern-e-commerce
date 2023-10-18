@@ -6,7 +6,27 @@ const router = express.Router();
 
 router.get(`/`, async (req, res) => {
   const categoriesList = await Category.find();
-  res.send(categoriesList);
+  res.status(200).send(categoriesList);
+});
+
+// Get a category by ID
+router.get("/:id", async (req, res) => {
+  const categoryId = req.params.id;
+
+  try {
+    // Find the category by ID
+    const category = await Category.findById(categoryId);
+
+    if (category) {
+      res.status(200).json(category);
+    } else {
+      res.status(404).json({ message: "Category not found" });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while retrieving the category" });
+  }
 });
 
 router.post(`/`, async (req, res) => {
