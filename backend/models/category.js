@@ -15,19 +15,20 @@ const categorySchema = new Schema({
   image: {
     type: String,
   },
-  createdDate: {
-    type: Date,
-    default: Date.now(),
-  },
-  createdBy: {
-    type: String,
-  },
-  modifiedDate: {
-    type: Date,
-  },
-  modifiedBy: {
-    type: String,
-  },
+  // createdDate: {
+  //   type: Date,
+  //   default: Date.now(),
+  // },
+  // createdBy: {
+  //   type: String,
+  // },
+  // modifiedDate: {
+  //   type: Date,
+  //   default: Date.now(),
+  // },
+  // modifiedBy: {
+  //   type: String,
+  // },
 });
 
 // Model
