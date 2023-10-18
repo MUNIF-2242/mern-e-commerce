@@ -1,10 +1,12 @@
 const express = require("express");
 const morgan = require("morgan");
+const mongoose = require("mongoose");
 const app = express();
 
 require("dotenv/config");
 
 const api = process.env.API_URL;
+const mongoUri = process.env.MONGO_URI;
 
 //Middleware
 app.use(express.json());
@@ -18,6 +20,15 @@ app.get(`${api}/products`, (req, res) => {
   };
   res.send(products);
 });
+
+mongoose
+  .connect(mongoUri)
+  .then(() => {
+    console.log("Database is connected");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 app.post(`${api}/products`, (req, res) => {
   const newProducts = req.body;
