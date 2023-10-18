@@ -4,6 +4,7 @@ const router = express.Router();
 
 // API
 
+// Get all category
 router.get(`/`, async (req, res) => {
   const categoriesList = await Category.find();
   res.status(200).send(categoriesList);
@@ -29,6 +30,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// create a category
 router.post(`/`, async (req, res) => {
   let category = new Category({
     name: req.body.name,
@@ -44,6 +46,35 @@ router.post(`/`, async (req, res) => {
   res.send(category);
 });
 
+// Update a category by ID
+router.put("/:id", async (req, res) => {
+  const categoryId = req.params.id;
+
+  try {
+    const updatedCategory = await Category.findByIdAndUpdate(
+      categoryId,
+      {
+        name: req.body.name,
+        color: req.body.color,
+        icon: req.body.icon,
+        image: req.body.image,
+      },
+      { new: true }
+    );
+
+    if (updatedCategory) {
+      res.status(200).json(updatedCategory);
+    } else {
+      res.status(404).json({ message: "Category not found" });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while updating the category" });
+  }
+});
+
+// Delete a category by ID
 router.delete("/:id", async (req, res) => {
   const categoryId = req.params.id;
 
