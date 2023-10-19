@@ -9,7 +9,9 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     //const productsList = await Product.find().select("name -_id isFeatured");//for remove attributes
+    //const productsList = await Product.find().populate("category");
     const productsList = await Product.find();
+
     res.send(productsList);
   } catch (error) {
     return res.status(500).send("Error getting products");
@@ -24,14 +26,15 @@ router.get("/:id", async (req, res) => {
       return res.status(400).send("Product ID is missing");
     }
 
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productId).populate("category");
     if (!product) {
       return res.status(404).send("Product not found");
     }
 
     res.send(product);
   } catch (error) {
-    return res.status(500).send("Error getting the product");
+    console.error(error);
+    return res.status(500).send(`Error getting the product: ${error.message}`);
   }
 });
 
