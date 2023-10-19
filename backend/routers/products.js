@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
   try {
     //const productsList = await Product.find().select("name -_id isFeatured");//for remove attributes
     //const productsList = await Product.find().populate("category");
-    const productsList = await Product.find();
+    const productsList = await Product.find().populate("category");
 
     res.send(productsList);
   } catch (error) {
@@ -42,7 +42,30 @@ router.get("/:id", async (req, res) => {
 router.get("/get/count", async (req, res) => {
   try {
     const productCount = await Product.countDocuments();
-    res.status(200).json({ success: true, count: productCount });
+    res.status(200).json({ success: true, productCount: productCount });
+  } catch (err) {
+    // Handle any errors that may occur during the countDocuments operation
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// API to get the featured products
+router.get("/get/featured", async (req, res) => {
+  try {
+    const products = await Product.find({ isFeatured: true });
+    res.status(200).json({ success: true, products });
+  } catch (err) {
+    // Handle any errors that may occur during the countDocuments operation
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// API to get the featured products with count parameter
+router.get("/get/featured/:count", async (req, res) => {
+  const count = req.params.count ? req.params.count : 0;
+  try {
+    const products = await Product.find({ isFeatured: true }).limit(+count);
+    res.status(200).json({ success: true, products });
   } catch (err) {
     // Handle any errors that may occur during the countDocuments operation
     res.status(500).json({ success: false, error: err.message });
