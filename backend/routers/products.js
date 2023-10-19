@@ -73,4 +73,45 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Update a product by ID
+router.put("/:id", async (req, res) => {
+  const category = await Category.findById(req.body.category);
+  if (!category) {
+    return res.status(400).send("Invalid Category");
+  }
+
+  const productId = req.params.id;
+
+  try {
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      {
+        name: req.body.name,
+        description: req.body.description,
+        richDescription: req.body.richDescription,
+        image: req.body.image,
+        images: req.body.images,
+        brand: req.body.brand,
+        price: req.body.price,
+        category: req.body.category,
+        countInStock: req.body.countInStock,
+        rating: req.body.rating,
+        numReviews: req.body.numReviews,
+        isFeatured: req.body.isFeatured,
+      },
+      { new: true }
+    );
+
+    if (updatedProduct) {
+      res.status(200).json(updatedProduct);
+    } else {
+      res.status(404).json({ message: "Product not found" });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while updating the product" });
+  }
+});
+
 module.exports = router;
