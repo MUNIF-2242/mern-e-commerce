@@ -8,9 +8,17 @@ const router = express.Router();
 // API to get a list of all products
 router.get("/", async (req, res) => {
   try {
-    //const productsList = await Product.find().select("name -_id isFeatured");//for remove attributes
-    //const productsList = await Product.find().populate("category");
-    const productsList = await Product.find().populate("category");
+    let query = {}; // Initialize an empty query object
+
+    // Check if the 'categories' query parameter is provided
+    if (req.query.categories) {
+      // If 'categories' is provided, split it by comma to support multiple categories
+      const categories = req.query.categories.split(",");
+      query.category = { $in: categories };
+    }
+
+    // Execute the query with the filters
+    const productsList = await Product.find(query).populate("category");
 
     res.send(productsList);
   } catch (error) {
