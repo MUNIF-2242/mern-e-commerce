@@ -38,6 +38,17 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// API to get the count of products
+router.get("/get/count", async (req, res) => {
+  try {
+    const productCount = await Product.countDocuments();
+    res.status(200).json({ success: true, count: productCount });
+  } catch (err) {
+    // Handle any errors that may occur during the countDocuments operation
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // API to create a new product
 router.post("/", async (req, res) => {
   try {
