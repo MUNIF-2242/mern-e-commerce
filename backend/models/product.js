@@ -54,6 +54,7 @@ const productSchema = new Schema({
     type: Boolean,
     default: false,
   },
+
   // createdDate: {
   //   type: Date,
   //   default: Date.now(),
@@ -67,6 +68,15 @@ const productSchema = new Schema({
   // modifiedBy: {
   //   type: String,
   // },
+});
+
+// Create a virtual 'id' field
+productSchema.virtual("id").get(function () {
+  return this._id.toHexString();
+});
+
+productSchema.set("toJSON", {
+  virtuals: true,
 });
 
 // Model

@@ -31,5 +31,14 @@ const categorySchema = new Schema({
   // },
 });
 
+// Create a virtual 'id' field
+categorySchema.virtual("id").get(function () {
+  return this._id.toHexString();
+});
+
+categorySchema.set("toJSON", {
+  virtuals: true,
+});
+
 // Model
 exports.Category = mongoose.model("Category", categorySchema);
