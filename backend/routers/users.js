@@ -52,6 +52,28 @@ router.post(`/`, async (req, res) => {
   res.send(user);
 });
 
+// register a User only admin can do that
+router.post(`/register`, async (req, res) => {
+  let user = new User({
+    name: req.body.name,
+    email: req.body.email,
+    password: bcrypt.hashSync(req.body.password, 10),
+    street: req.body.street,
+    apartment: req.body.apartment,
+    city: req.body.city,
+    zip: req.body.zip,
+    country: req.body.country,
+    phone: req.body.phone,
+    isAdmin: req.body.isAdmin,
+  });
+
+  user = await user.save();
+  if (!user) {
+    return res.status(404).send("User can not be created");
+  }
+  res.send(user);
+});
+
 // Login route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
