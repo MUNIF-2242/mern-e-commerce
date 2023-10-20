@@ -7,6 +7,7 @@ function authJwt() {
   return expressJwt({
     secret: SECRET_KEY, // Use 'secret' instead of 'SECRET_KEY'
     algorithms: ["HS256"],
+    isRevoked,
   }).unless({
     path: [
       { url: /\/api\/v1\/products(.*)/, methods: ["GET", "OPTIONS"] },
@@ -16,6 +17,16 @@ function authJwt() {
       `${api}/users/register`,
     ],
   });
+}
+
+async function isRevoked(req, payload) {
+  //console.log(payload);
+  if (!payload.payload.isAdmin) {
+    //console.log("Not Admin");
+    return true;
+  }
+  // console.log("Admin");
+  return false;
 }
 
 module.exports = authJwt;

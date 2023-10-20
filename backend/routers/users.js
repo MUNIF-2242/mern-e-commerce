@@ -95,7 +95,7 @@ router.post("/login", async (req, res) => {
         { expiresIn: "1h" } // You can set the expiration time as per your requirements
       );
 
-      res.status(200).json({ success: true, user: user.email, token });
+      res.status(200).json({ success: true, user, token });
     } else {
       res.status(401).json({ success: false, message: "Invalid password" });
     }
