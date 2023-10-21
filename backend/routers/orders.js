@@ -6,8 +6,21 @@ const router = express.Router();
 // API
 // Get all orders
 router.get(`/`, async (req, res) => {
-  const ordersList = await Order.find();
+  const ordersList = await Order.find()
+    .populate("user", "name")
+    .sort({ dateOrdered: -1 });
   res.send(ordersList);
+});
+
+//Get order details
+router.get(`/:id`, async (req, res) => {
+  const order = await Order.findById(req.params.id)
+    .populate("user", "name")
+    .populate({
+      path: "orderItems",
+      populate: { path: "product", populate: "category" },
+    });
+  res.send(order);
 });
 
 // create a order
