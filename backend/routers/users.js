@@ -103,4 +103,36 @@ router.post("/login", async (req, res) => {
     res.status(404).json({ success: false, message: "User not found" });
   }
 });
+
+// API to get the count of users
+router.get("/get/count", async (req, res) => {
+  try {
+    const userCount = await User.countDocuments();
+    res.status(200).json({ success: true, userCount: userCount });
+  } catch (err) {
+    // Handle any errors that may occur during the countDocuments operation
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const deletedUser = await User.findByIdAndRemove(userId);
+
+    if (deletedUser) {
+      res
+        .status(200)
+        .json({ success: true, message: "User deleted successfully" });
+    } else {
+      res.status(404).json({ success: false, message: "User not found" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "An error occurred while deleting the user",
+    });
+  }
+});
 module.exports = router;
