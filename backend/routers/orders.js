@@ -159,4 +159,21 @@ router.get("/get/count", async (req, res) => {
   }
 });
 
+// API to get the user orders history
+router.get("/get/userorders/:userid", async (req, res) => {
+  try {
+    const userId = req.params.userid; // Get the user ID from the request params
+    const userOrdersList = await Order.find({ user: userId }) // Create a filter object
+      .populate({
+        path: "orderItems",
+        populate: { path: "product", populate: "category" },
+      })
+      .sort({ dateOrdered: -1 });
+    res.send(userOrdersList);
+  } catch (err) {
+    // Handle any errors that may occur during the countDocuments operation
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
