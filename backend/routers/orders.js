@@ -59,4 +59,68 @@ router.post(`/`, async (req, res) => {
   }
 });
 
+// Update a order by ID
+router.put("/:id", async (req, res) => {
+  const orderId = req.params.id;
+
+  try {
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      {
+        status: req.body.status,
+      },
+      { new: true }
+    );
+
+    if (updatedOrder) {
+      res.status(200).json(updatedOrder);
+    } else {
+      res.status(404).json({ message: "Order not found" });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while updating the order" });
+  }
+});
+
+// Delete a order by ID
+router.delete("/:id", async (req, res) => {
+  const orderId = req.params.id;
+
+  try {
+    // Find the order by ID
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ message: "Order not found", success: false });
+    }
+
+    // Find and remove the associated order items
+    const orderItems = order.orderItems;
+    const deleteOrderItemsPromises = orderItems.map(async (orderItemId) => {
+      return OrderItem.findByIdAndRemove(orderItemId);
+    });
+
+    await Promise.all(deleteOrderItemsPromises);
+
+    // Delete the order itself
+    const deletedOrder = await Order.findByIdAndRemove(orderId);
+
+    if (deletedOrder) {
+      res
+        .status(200)
+        .json({ message: "Order deleted successfully", success: true });
+    } else {
+      res.status(404).json({ message: "Order not found", success: false });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while deleting the order" });
+  }
+});
+
 module.exports = router;
