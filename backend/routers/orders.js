@@ -141,4 +141,22 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.get("/get/totalsales", async (req, res) => {
+  const totalSales = await Order.aggregate([
+    { $group: { _id: null, totalPrice: { $sum: "$totalPrice" } } },
+  ]);
+  res.send({ totalSales: totalSales.pop().totalPrice });
+});
+
+// API to get the count of orders
+router.get("/get/count", async (req, res) => {
+  try {
+    const orderCount = await Order.countDocuments();
+    res.status(200).json({ success: true, orderCount: orderCount });
+  } catch (err) {
+    // Handle any errors that may occur during the countDocuments operation
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
