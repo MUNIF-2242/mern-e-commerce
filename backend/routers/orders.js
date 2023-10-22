@@ -24,6 +24,8 @@ router.get(`/:id`, async (req, res) => {
 });
 
 // create a order
+// create a order
+// create a order
 router.post(`/`, async (req, res) => {
   const orderItemsPromises = req.body.orderItems.map(async (orderItem) => {
     const newOrderItem = new OrderItem({
@@ -37,6 +39,22 @@ router.post(`/`, async (req, res) => {
     const orderItems = await Promise.all(orderItemsPromises);
     const orderItemsIds = orderItems.map((orderItem) => orderItem._id);
 
+    // Fetch the order items from the database and calculate total price
+    const totalPrices = await Promise.all(
+      orderItemsIds.map(async (orderItemId) => {
+        const orderItem = await OrderItem.findById(orderItemId).populate(
+          "product",
+          "price"
+        );
+        const totalPrice = orderItem.product.price * orderItem.quantity;
+
+        return totalPrice;
+      })
+    );
+
+    // Calculate the sum of totalPrices
+    const totalPrice = totalPrices.reduce((acc, price) => acc + price, 0);
+
     const order = new Order({
       orderItems: orderItemsIds,
       shippingAddress1: req.body.shippingAddress1,
@@ -44,7 +62,7 @@ router.post(`/`, async (req, res) => {
       city: req.body.city,
       zip: req.body.zip,
       country: req.body.country,
-      totalPrice: req.body.totalPrice,
+      totalPrice: totalPrice, // Set the calculated total price
       phone: req.body.phone,
       status: req.body.status,
       user: req.body.user,
