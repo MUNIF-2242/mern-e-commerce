@@ -223,4 +223,45 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+//upload galllery-images
+
+// Update a product by ID
+router.put(
+  "/gallery-images/:id",
+  uploadOptions.array("images", 10),
+  async (req, res) => {
+    const files = req.files;
+    let imagePaths = [];
+    const basePath = `${req.protocol}://${req.get("host")}/public/upload/`;
+
+    if (files) {
+      files.forEach((file) => {
+        imagePaths.push(`${basePath}${file.filename}`);
+      });
+    }
+
+    const productId = req.params.id;
+
+    try {
+      const updatedProduct = await Product.findByIdAndUpdate(
+        productId,
+        {
+          images: imagePaths,
+        },
+        { new: true }
+      );
+
+      if (updatedProduct) {
+        res.status(200).json(updatedProduct);
+      } else {
+        res.status(404).json({ message: "Product not found" });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: "An error occurred while updating the product" });
+    }
+  }
+);
+
 module.exports = router;
