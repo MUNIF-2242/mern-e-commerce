@@ -4,19 +4,26 @@ const { Product } = require("../models/product");
 const { Category } = require("../models/category");
 const router = express.Router();
 
+const FILE_TYPE_MAP = {
+  "image/png": "png",
+  "image/jpeg": "jpeg",
+  "image/jpg": "jpg",
+};
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "public/upload"); // Remove the leading '/'
+    const isValid = FILE_TYPE_MAP[file.mimetype];
+    let uploadError = new Error("invalid image type");
+
+    if (isValid) {
+      uploadError = null;
+    }
+    cb(uploadError, "public/upload");
   },
   filename: function (req, file, cb) {
-    const originalName = file.originalname;
-    const fileExtension = originalName.split(".").pop();
-    const fileNameWithoutExtension = originalName.replace(
-      `.${fileExtension}`,
-      ""
-    ); // Remove the file extension
-    const sanitizedFileName = fileNameWithoutExtension.replace(/\s+/g, "-"); // Replace spaces with hyphens
-    cb(null, `${sanitizedFileName}-${Date.now()}.${fileExtension}`);
+    const fileName = file.originalname.split(" ").join("-");
+    const extension = FILE_TYPE_MAP[file.mimetype];
+    cb(null, `${fileName}-${Date.now()}.${extension}`);
   },
 });
 
