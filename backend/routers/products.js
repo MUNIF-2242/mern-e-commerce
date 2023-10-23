@@ -149,10 +149,22 @@ router.post("/", uploadOptions.single("image"), async (req, res) => {
 });
 
 // Update a product by ID
-router.put("/:id", async (req, res) => {
+router.put("/:id", uploadOptions.single("image"), async (req, res) => {
   const category = await Category.findById(req.body.category);
   if (!category) {
     return res.status(400).send("Invalid Category");
+  }
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    return res.status(400).send("Invalid Product");
+  }
+
+  const file = req.file;
+  let imagePath;
+  if (file) {
+    const fileName = file.filename;
+    const basePath = `${req.protocol}://${req.get("host")}/public/upload`;
+    imagePath = `${basePath}/${fileName}`;
   }
 
   const productId = req.params.id;
@@ -164,7 +176,7 @@ router.put("/:id", async (req, res) => {
         name: req.body.name,
         description: req.body.description,
         richDescription: req.body.richDescription,
-        image: req.body.image,
+        image: imagePath,
         images: req.body.images,
         brand: req.body.brand,
         price: req.body.price,
