@@ -14,17 +14,12 @@ const ProductsContainer = () => {
     };
   }, []);
 
-  const Item = ({ title }) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
-    </View>
-  );
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView>
       <FlatList
-        horizontal
+        numColumns="2"
         data={products}
-        renderItem={({ item }) => <ProductList key={item._id} item={item} />}
+        renderItem={({ item }) => <ProductList key={item.id} item={item} />}
         keyExtractor={(item) => item._id.$oid}
       />
     </SafeAreaView>
@@ -33,17 +28,4 @@ const ProductsContainer = () => {
 
 export default ProductsContainer;
 
-const styles = StyleSheet.create({
-  container: {
-    //flex: 1,
-  },
-  item: {
-    backgroundColor: "#f9c2ff",
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-  },
-  title: {
-    // fontSize: 32,
-  },
-});
+const styles = StyleSheet.create({});
