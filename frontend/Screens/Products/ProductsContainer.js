@@ -2,6 +2,7 @@ import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 
 import data from "../../data/products.json";
+import ProductList from "./ProductList";
 
 const ProductsContainer = () => {
   const [products, setProducts] = useState([]);
@@ -23,7 +24,7 @@ const ProductsContainer = () => {
       <FlatList
         horizontal
         data={products}
-        renderItem={({ item }) => <Item title={item.brand} />}
+        renderItem={({ item }) => <ProductList key={item._id} item={item} />}
         keyExtractor={(item) => item._id.$oid}
       />
     </SafeAreaView>
